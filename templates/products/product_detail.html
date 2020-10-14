@@ -1,13 +1,19 @@
-<h1>{{ product.name }}</h1>
+{% extends 'base.html' %}
 
-<h2>
-    {% if product.is_vegan %}
-    Vegan!
-    {% else %}
-    Not vegan!
-    {% endif %}
-</h2>
+{% block content %}
+    <h1>{{ product.name }}</h1>
 
-{% for ingredient in product.ingredients.all %}
-    <p>{{ ingredient }}</p>
-{% endfor %}
+    <h2>
+        {% if product.is_vegan %}
+            Vegan!
+        {% else %}
+            Not vegan!
+        {% endif %}
+    </h2>
+
+    {% for ingredient in product.ingredients.all %}
+        <p>{{ ingredient }}</p>
+    {% endfor %}
+{% endblock %}
+
+
