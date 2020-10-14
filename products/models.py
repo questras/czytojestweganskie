@@ -1,4 +1,5 @@
 from django.db import models
+from django.urls import reverse
 
 
 class Ingredient(models.Model):
@@ -24,3 +25,6 @@ class Product(models.Model):
         string += '(vegan)' if self.is_vegan() else '(not vegan)'
 
         return string
+
+    def get_absolute_url(self):
+        return reverse('product_detail', args=(self.id,))

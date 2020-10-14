@@ -1,4 +1,5 @@
 from django.test import TestCase
+from django.urls import reverse
 
 from .models import Product, Ingredient
 
@@ -58,3 +59,26 @@ class ProductTests(TestCase):
     def test_str_method(self):
         self.assertEqual(str(self.vegan), 'product1(vegan)')
         self.assertEqual(str(self.notvegan), 'product2(not vegan)')
+
+    def test_get_absolute_url(self):
+        self.assertEqual(self.vegan.get_absolute_url(),
+                         reverse('product_detail', args=(self.vegan.id,)))
+        self.assertEqual(self.notvegan.get_absolute_url(),
+                         reverse('product_detail', args=(self.notvegan.id,)))
+
+    def test_detail_view_status_code(self):
+        r = self.client.get(self.vegan.get_absolute_url())
+        self.assertEqual(r.status_code, 200)
+
+    def test_detail_view_template(self):
+        r = self.client.get(self.vegan.get_absolute_url())
+        self.assertTemplateUsed('products/product_detail.html')
+        self.assertContains(r, 'Vegan!')
+        self.assertContains(r, 'product1')
+        self.assertContains(r, 'ingredient1')
+
+        r = self.client.get(self.notvegan.get_absolute_url())
+        self.assertTemplateUsed('products/product_detail.html')
+        self.assertContains(r, 'Not vegan!')
+        self.assertContains(r, 'product2')
+        self.assertContains(r, 'ingredient2')
