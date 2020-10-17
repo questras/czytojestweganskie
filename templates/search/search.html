@@ -1,0 +1,26 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block css %}
+    <link rel="stylesheet" href="{% static "css/search.css" %}" type="text/css">
+{% endblock %}
+
+{% block js %}
+    <script src="{% static 'js/autocomplete.js' %}"></script>
+    <script>
+        autocomplete("{% url 'autocomplete' %}");
+    </script>
+{% endblock %}
+
+{% block content %}
+
+    <form id="search-form" autocomplete="off" action="">
+        {% csrf_token %}
+        <div class="autocomplete">
+            <input id="search_input" type="text" name="search_input" placeholder="Search product...">
+            <div class="autocomplete-items" id="autocomplete-items">
+            </div>
+        </div>
+        <input type="submit">
+    </form>
+{% endblock %}
