@@ -4,66 +4,72 @@ function autocomplete(search_url) {
     $(document).ready(function () {
         let search_input = $("#search_input");
 
+        // Update autocomplete list when search input is changed.
         search_input.keyup(function () {
-            let search = $(this).val();
-            updateAutocompleteList(search);
+            let search_query = $(this).val();
+            updateAutocompleteList(search_query);
         });
 
-
+        // Show autocomplete list when search input gets focused.
         search_input.focus(function () {
-            showList();
+            showAutocompleteList();
         });
 
+        // Hide autocomplete list 100ms after search input gets unfocused.
         search_input.blur(function () {
-            setTimeout(hideList, 100);
-
+            setTimeout(hideAutocompleteList, 100);
         });
-
     })
 
-    function showList() {
+    function showAutocompleteList() {
         $('#autocomplete-items').show();
     }
 
-    function hideList() {
+    function hideAutocompleteList() {
         $('#autocomplete-items').hide();
     }
 
-    function updateAutocompleteList(search) {
-        let autocompleteItems = $('#autocomplete-items');
-        if (search.length > 2) {
+    function updateAutocompleteList(search_query) {
+        let autocompleteList = $('#autocomplete-items');
+
+        // Show autocomplete list only when there are more than 2 characters
+        // in search input.
+        if (search_query.length > 2) {
             $.ajax({
                 url: search_url,
                 type: 'GET',
-                data: {search: search},
+                data: {search_query: search_query},
                 dataType: 'json',
                 success: function (response) {
-                    let result = response['result']
-                    autocompleteItems.empty();
+                    let result = response['result'];
+                    autocompleteList.empty();
                     let length = Math.min(AUTOCOMPLETE_ITEMS_LIMIT, result.length);
                     for (let i = 0; i < length; i++) {
                         let name = result[i]['name'];
                         let url = result[i]['url'];
                         let is_vegan = result[i]['is_vegan'];
 
-                        autocompleteItems.append(createListItem(name, url, is_vegan));
+                        autocompleteList.append(
+                            createListItem(name, url, is_vegan)
+                        );
                     }
                 }
             })
-        } else {
-            autocompleteItems.empty();
+        }
+        else {
+            autocompleteList.empty();
         }
     }
 
     function createListItem(name, url, is_vegan) {
-        let item = `<a href="${url}"><div>${name}`;
+        let is_vegan_span;
         if (is_vegan) {
-            item += '<span style="color:green">(V)</span>';
-        } else {
-            item += '<span style="color:red">(not V)</span>';
+            is_vegan_span = '<span style="color:green">(V)</span>';
         }
-        item += '</div></a>'
+        else {
+            is_vegan_span = '<span style="color:red">(not V)</span>';
+        }
 
-        return item;
+        return `<a href="${url}"><div>${name}${is_vegan_span}</div></a>`;
     }
 }

@@ -13,15 +13,13 @@ class SearchView(ListView):
         return Product.objects.all()
 
 
-def autocomplete(request):
-    search_query = request.GET.get('search')
-    print(f'q:{search_query}')
-    print(type(search_query))
+def autocomplete_view(request):
+    search_query = request.GET.get('search_query')
     autocomplete_products = Product.objects.filter(
         Q(name__icontains=search_query)
     )
 
-    json_products = [
+    products_json = [
         {
             'name': obj.name,
             'url': obj.get_absolute_url(),
@@ -30,4 +28,4 @@ def autocomplete(request):
         for obj in autocomplete_products
     ]
 
-    return JsonResponse({'result': json_products})
+    return JsonResponse({'result': products_json})
