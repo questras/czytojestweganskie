@@ -1,4 +1,4 @@
-from django.views.generic import TemplateView
+from django.views.generic import TemplateView, ListView
 from django.db.models import Q
 from django.http import JsonResponse
 
@@ -7,6 +7,15 @@ from products.models import Product
 
 class SearchView(TemplateView):
     template_name = 'search/search.html'
+
+
+class SearchResultsView(ListView):
+    template_name = 'search/search_results.html'
+    context_object_name = 'products'
+
+    def get_queryset(self):
+        search_query = self.request.GET.get('search_query') or ''
+        return Product.objects.filter(Q(name__icontains=search_query))
 
 
 def autocomplete_view(request):

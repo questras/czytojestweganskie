@@ -16,6 +16,51 @@ class SearchViewTests(TestCase):
         self.assertTemplateUsed(r, 'search/search.html')
 
 
+class SearchViewResultsTests(TestCase):
+    def test_status_code(self):
+        r = self.client.get(reverse('search_results'))
+        self.assertEqual(r.status_code, 200)
+        r = self.client.get(reverse('search_results'),
+                            data={'search_query': 'test'})
+        self.assertEqual(r.status_code, 200)
+
+    def test_correct_template(self):
+        r = self.client.get(reverse('search_results'))
+        self.assertTemplateUsed(r, 'search/search_results.html')
+
+    def test_correct_results(self):
+        product1 = Product.objects.create(name='test')
+        product2 = Product.objects.create(name='testproduct')
+
+        # Gets all products when no search_query.
+        r = self.client.get(reverse('search_results'))
+        self.assertContains(r, 'test')
+        self.assertContains(r, 'testproduct')
+        self.assertIn(product1, r.context['products'])
+        self.assertIn(product2, r.context['products'])
+
+        # Gets both products.
+        r = self.client.get(reverse('search_results'),
+                            data={'search_query': 'test'})
+        self.assertContains(r, 'test')
+        self.assertContains(r, 'testproduct')
+        self.assertIn(product1, r.context['products'])
+        self.assertIn(product2, r.context['products'])
+
+        # Gets only product2.
+        r = self.client.get(reverse('search_results'),
+                            data={'search_query': 'product'})
+        self.assertContains(r, 'testproduct')
+        self.assertNotIn(product1, r.context['products'])
+        self.assertIn(product2, r.context['products'])
+
+        # Gets no products.
+        r = self.client.get(reverse('search_results'),
+                            data={'search_query': 'noresult'})
+        self.assertNotIn(product1, r.context['products'])
+        self.assertNotIn(product2, r.context['products'])
+
+
 class AutocompleteViewTests(TestCase):
     def setUp(self) -> None:
         self.vegan_ingr = Ingredient.objects.create(

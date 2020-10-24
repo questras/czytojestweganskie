@@ -13,10 +13,10 @@
 {% endblock %}
 
 {% block content %}
-    <form id="search-form" autocomplete="off" action="">
+    <form id="search-form" autocomplete="off" action="{% url 'search_results' %}" method="get">
         {% csrf_token %}
         <div class="autocomplete-container">
-            <input id="search_input" type="text" name="search_input" placeholder="Search product...">
+            <input id="search_input" type="text" name="search_query" placeholder="Search product...">
             <div class="autocomplete-items" id="autocomplete-items">
             </div>
         </div>
