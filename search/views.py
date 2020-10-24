@@ -1,16 +1,12 @@
-from django.views.generic import ListView
+from django.views.generic import TemplateView
 from django.db.models import Q
 from django.http import JsonResponse
 
 from products.models import Product
 
 
-class SearchView(ListView):
+class SearchView(TemplateView):
     template_name = 'search/search.html'
-    context_object_name = 'products'
-
-    def get_queryset(self):
-        return Product.objects.all()
 
 
 def autocomplete_view(request):
