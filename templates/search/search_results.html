@@ -2,6 +2,11 @@
 
 {% block content %}
     {% for product in products %}
-        <a href="{{ product.get_absolute_url }}">{{ product.name }}</a><br/>
+        <div>
+            <a href="{{ product.get_absolute_url }}">
+                <img height="10%" width="10%" src="{{ product.image.url }}">
+                {{ product.name }}
+            </a>
+        </div>
     {% endfor %}
 {% endblock %}
