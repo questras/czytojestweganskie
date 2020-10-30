@@ -15,6 +15,7 @@ class Ingredient(models.Model):
 
 class Product(models.Model):
     name = models.CharField(max_length=255)
+    image = models.ImageField(upload_to='images/')
     ingredients = models.ManyToManyField(Ingredient, related_name='products')
 
     def is_vegan(self):
