@@ -47,10 +47,11 @@ function autocomplete(search_url) {
                     for (let i = 0; i < length; i++) {
                         let name = result[i]['name'];
                         let url = result[i]['url'];
+                        let image_url = result[i]['image_url'];
                         let is_vegan = result[i]['is_vegan'];
 
                         autocompleteList.append(
-                            createListItem(name, url, is_vegan)
+                            createListItem(name, url, image_url, is_vegan)
                         );
                     }
                 }
@@ -61,7 +62,7 @@ function autocomplete(search_url) {
         }
     }
 
-    function createListItem(name, url, is_vegan) {
+    function createListItem(name, url, image_url, is_vegan) {
         let is_vegan_span;
         if (is_vegan) {
             is_vegan_span = '<span style="color:green">(V)</span>';
@@ -70,6 +71,11 @@ function autocomplete(search_url) {
             is_vegan_span = '<span style="color:red">(not V)</span>';
         }
 
-        return `<a href="${url}"><div>${name}${is_vegan_span}</div></a>`;
+        return `<a href="${url}">
+                <div class="autocomplete-item">
+                    <img src="${image_url}">
+                    <div>${name}${is_vegan_span}</div>
+                </div>
+                </a>`;
     }
 }

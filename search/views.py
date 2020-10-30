@@ -28,6 +28,7 @@ def autocomplete_view(request):
         {
             'name': obj.name,
             'url': obj.get_absolute_url(),
+            'image_url': obj.image.url,
             'is_vegan': obj.is_vegan()
         }
         for obj in autocomplete_products

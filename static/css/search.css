@@ -17,12 +17,19 @@
     right: 0;
 }
 
-/* Style of one autocomplete list item. */
-.autocomplete-items div {
+.autocomplete-item {
+    display: flex;
     padding: 10px;
     cursor: pointer;
     background-color: #fff;
     border-bottom: 1px solid #d4d4d4;
+}
+
+.autocomplete-item img {
+    width: 30%;
+    height: 100%;
+    border-radius: 5%;
+    margin-right: 5px;
 }
 
 .autocomplete-items div:hover {
