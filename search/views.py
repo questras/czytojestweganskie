@@ -16,7 +16,8 @@ class SearchResultsView(ListView):
 
     def get_queryset(self):
         search_query = self.request.GET.get('search_query') or ''
-        return Product.objects.filter(Q(name__icontains=search_query))
+        results = Product.objects.filter(Q(name__icontains=search_query))
+        return results.order_by('id')
 
 
 def autocomplete_view(request):
