@@ -1,7 +1,20 @@
+from tempfile import NamedTemporaryFile
+
 from django.test import TestCase
 from django.urls import reverse
+from django.core.files.images import ImageFile
+from django.conf import settings
 
 from .models import Product, Ingredient
+
+
+def get_temporary_image_file():
+    """Return temporary image file for testing purposes. This file
+    is deleted after the test using it is finished. File's url is in
+    file.name attribute.
+    """
+    img_dir = settings.MEDIA_ROOT
+    return ImageFile(NamedTemporaryFile(dir=img_dir, suffix='.jpg'))
 
 
 class IngredientTests(TestCase):
@@ -38,13 +51,16 @@ class ProductTests(TestCase):
             vegan=False
         )
 
+        tmp_image = get_temporary_image_file()
         self.vegan = Product.objects.create(
-            name='product1'
+            name='product1',
+            image=tmp_image.name
         )
         self.vegan.ingredients.add(self.vegan_ingr)
 
         self.notvegan = Product.objects.create(
-            name='product2'
+            name='product2',
+            image=tmp_image.name
         )
         self.notvegan.ingredients.add(self.notvegan_ingr)
 

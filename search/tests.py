@@ -1,9 +1,22 @@
+from tempfile import NamedTemporaryFile
+
 from django.test import TestCase
 from django.urls import reverse
+from django.conf import settings
+from django.core.files.images import ImageFile
 
 import json
 
 from products.models import Ingredient, Product
+
+
+def get_temporary_image_file():
+    """Return temporary image file for testing purposes. This file
+    is deleted after the test using it is finished. File's url is in
+    file.name attribute.
+    """
+    img_dir = settings.MEDIA_ROOT
+    return ImageFile(NamedTemporaryFile(dir=img_dir, suffix='.jpg'))
 
 
 class SearchViewTests(TestCase):
@@ -29,8 +42,15 @@ class SearchViewResultsTests(TestCase):
         self.assertTemplateUsed(r, 'search/search_results.html')
 
     def test_correct_results(self):
-        product1 = Product.objects.create(name='test')
-        product2 = Product.objects.create(name='testproduct')
+        tmp_image = get_temporary_image_file()
+        product1 = Product.objects.create(
+            name='test',
+            image=tmp_image.name
+        )
+        product2 = Product.objects.create(
+            name='testproduct',
+            image=tmp_image.name
+        )
 
         # Gets all products when no search_query.
         r = self.client.get(reverse('search_results'))
@@ -72,13 +92,16 @@ class AutocompleteViewTests(TestCase):
             vegan=False
         )
 
+        tmp_image = get_temporary_image_file()
         self.vegan = Product.objects.create(
-            name='vegan_product'
+            name='vegan_product',
+            image=tmp_image.name
         )
         self.vegan.ingredients.add(self.vegan_ingr)
 
         self.notvegan = Product.objects.create(
-            name='notvegan_product'
+            name='notvegan_product',
+            image=tmp_image.name
         )
         self.notvegan.ingredients.add(self.notvegan_ingr)
 
@@ -104,7 +127,8 @@ class AutocompleteViewTests(TestCase):
         # In sorted order, response_items_names should be:
         # ['notvegan_product', 'vegan_product']
         response_items_names = sorted(
-            [json_response['result'][0]['name'], json_response['result'][1]['name']]
+            [json_response['result'][0]['name'],
+             json_response['result'][1]['name']]
         )
         self.assertEqual(self.notvegan.name, response_items_names[0])
         self.assertEqual(self.vegan.name, response_items_names[1])
