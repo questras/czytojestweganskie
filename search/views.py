@@ -11,6 +11,7 @@ class SearchView(TemplateView):
 
 class SearchResultsView(ListView):
     template_name = 'search/search_results.html'
+    paginate_by = 3
     context_object_name = 'products'
 
     def get_queryset(self):
